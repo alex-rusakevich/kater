@@ -4,6 +4,22 @@ import qtawesome as qta
 
 
 class UI(QMainWindow):
+    def toggleReading(self, event=None, desired_state=None):
+        btn = self.toggleReadingBtn
+
+        if desired_state == None:
+            state = btn.property("is_reading_shown")
+
+            btn.setProperty("is_reading_shown",
+                            not state)
+        else:
+            btn.setProperty("is_reading_shown", desired_state)
+
+        if btn.property("is_reading_shown"):
+            btn.setIcon(qta.icon('ei.eye-open'))
+        else:
+            btn.setIcon(qta.icon('ei.eye-close'))
+
     def __init__(self):
         super().__init__()
         uic.loadUi("kater/kater.ui", self)
@@ -19,8 +35,9 @@ class UI(QMainWindow):
             qta.icon('fa.play-circle'))
         self.findChild(QPushButton, "saveUserRecord").setIcon(
             qta.icon('fa5s.save'))
-        self.findChild(QPushButton, "toggleReading").setIcon(
-            qta.icon('ei.eye-open'))
+
+        self.toggleReading(desired_state=True)
+        self.toggleReadingBtn.clicked.connect(self.toggleReading)
 
 
 def kater(file_in=None):
