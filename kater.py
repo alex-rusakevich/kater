@@ -12,8 +12,8 @@ def katerCompress():
 
 def main():
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('file-name', action='store',
-                            type=str, nargs="?", help="kater file to open")
+    arg_parser.add_argument('-l', "--load",
+                            type=str, help="kater file to open")
     arg_parser.add_argument("-gktr", "--gen-ktr", nargs=2,
                             help=f"generate a .ktr ('train reading') file from files in a folder and exit. \
 #1 is the folder, #2 is an output file path")
@@ -35,8 +35,8 @@ def main():
                     name = os.path.normpath(name)
                     zf.write(name, orig_name)
         sys.exit(0)
-    elif hasattr(args, "file_name") and args.file_name:  # Start module
-        kater(args.file_name)
+    elif hasattr(args, "load") and args.load:  # Start module
+        kater(args.load)
     else:  # Dry run
         kater()
 

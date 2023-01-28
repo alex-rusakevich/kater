@@ -17,15 +17,47 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>450</width>
+     <height>600</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>16777215</height>
+    </size>
+   </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="resultSummary">
+    <item row="4" column="0">
+     <widget class="QPushButton" name="playUserRecord">
       <property name="text">
-       <string>Your result is ...%</string>
+       <string>Play your record</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
+    <item row="4" column="1">
+     <widget class="QPushButton" name="resetUserRecord">
+      <property name="text">
+       <string>Reset your record</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2">
+     <widget class="QPushButton" name="saveUserRecord">
+      <property name="text">
+       <string>Save your record</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
      <widget class="QPushButton" name="toggleReadingBtn">
       <property name="text">
        <string>Toggle reading</string>
@@ -35,48 +67,66 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="2">
+    <item row="0" column="1">
+     <widget class="QPushButton" name="resetAll">
+      <property name="text">
+       <string>Reset all</string>
+      </property>
+      <property name="is_reading_shown" stdset="0">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QPushButton" name="resetExample">
+      <property name="text">
+       <string>Reset the example</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
      <widget class="QPushButton" name="playExample">
       <property name="text">
        <string>Play the example</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
-     <widget class="QPushButton" name="startRecording">
-      <property name="text">
-       <string>Start</string>
+    <item row="2" column="0" colspan="3">
+     <widget class="QTextBrowser" name="readingText">
+      <property name="font">
+       <font>
+        <pointsize>16</pointsize>
+       </font>
       </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QPushButton" name="playUserRecord">
-      <property name="text">
-       <string>Play your record</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="2">
-     <widget class="QPushButton" name="saveUserRecord">
-      <property name="text">
-       <string>Save your record</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" colspan="3">
-     <widget class="QTextBrowser" name="pinyinText">
       <property name="placeholderText">
        <string/>
       </property>
      </widget>
     </item>
     <item row="3" column="0" colspan="3">
+     <widget class="QPushButton" name="startRecording">
+      <property name="text">
+       <string>Start</string>
+      </property>
+      <property name="is_recording" stdset="0">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0" colspan="3">
      <widget class="QTextBrowser" name="resultText">
       <property name="maximumSize">
        <size>
         <width>16777215</width>
         <height>200</height>
        </size>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" rowspan="2">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Your result is ...%</string>
       </property>
      </widget>
     </item>

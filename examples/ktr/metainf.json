@@ -1,7 +1,7 @@
 {
     "version": 1.0,
     "lang": "ch",
-    "audio_file": "audio.ogg",
+    "audio": "audio.ogg",
     "text": "text.html",
     "reading": "reading.txt"
 }
