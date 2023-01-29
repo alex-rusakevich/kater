@@ -89,6 +89,9 @@
       <property name="text">
        <string>Play the example</string>
       </property>
+      <property name="is_playing" stdset="0">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
     <item row="2" column="0" colspan="3">

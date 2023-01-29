@@ -39,6 +39,28 @@ class UI(QMainWindow):
             btn.setText("Start")
             btn.setIcon(qta.icon('fa.microphone'))
 
+    def toggleExamplePlay(self, event=None, desired_state=None):
+        btn = self.playExample
+
+        if desired_state == None:
+            state = btn.property("is_playing")
+            btn.setProperty("is_playing", not state)
+        else:
+            btn.setProperty("is_playing", desired_state)
+
+        if btn.property("is_playing"):
+            btn.setText("Pause the example")
+            btn.setIcon(qta.icon('fa.pause-circle'))
+
+            if hasattr(self, "player"):
+                self.player.play()
+        else:
+            btn.setText("Play the example")
+            btn.setIcon(qta.icon('fa.play-circle'))
+
+            if hasattr(self, "player"):
+                self.player.pause()
+
     def __init__(self):
         super().__init__()
         uic.loadUi("kater/kater.ui", self)
@@ -65,9 +87,8 @@ class UI(QMainWindow):
         self.findChild(QPushButton, "resetAll").setIcon(
             qta.icon('mdi.reload'))
 
-        self.findChild(QPushButton, "playExample").setIcon(
-            qta.icon('fa.play-circle'))
-        self.playExample.clicked.connect(lambda event: self.player.play())
+        self.toggleExamplePlay(desired_state=False)
+        self.playExample.clicked.connect(self.toggleExamplePlay)
 
         self.toggleReading(desired_state=True)
         self.toggleReadingBtn.clicked.connect(self.toggleReading)
@@ -76,6 +97,14 @@ class UI(QMainWindow):
         get_tmp_dir().cleanup()
 
     def use_global_object(self):
+        def example_media_status_changed(status):
+            if status == QMediaPlayer.MediaStatus.EndOfMedia:
+                btn = self.playExample
+                btn.setProperty("is_playing", False)
+                btn.setText("Play the example")
+                btn.setIcon(qta.icon('fa.play-circle'))
+                self.player.stop()
+
         ktr_obj = get_global_ktr_obj()
         self.readingText.setText(ktr_obj.text)
 
@@ -92,6 +121,10 @@ class UI(QMainWindow):
         audio_output.setVolume(100)
         self.player = player
         self.audio_output = audio_output
+
+        self.player.mediaStatusChanged.connect(example_media_status_changed)
+
+        self.reading = ktr_obj.reading
 
 
 def kater(file_in=None):
