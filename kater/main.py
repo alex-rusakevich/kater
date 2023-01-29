@@ -110,9 +110,6 @@ class UI(QMainWindow):
                 self.player.stop()
         self.stopBtn.clicked.connect(stop_btn_clicked)
 
-    def closeEvent(self, event):
-        get_tmp_dir().cleanup()
-
     def use_global_object(self):
         def example_media_status_changed(status):
             if status == QMediaPlayer.MediaStatus.EndOfMedia:
@@ -206,3 +203,4 @@ def kater(file_in=None):
     window.use_global_object()
 
     sys.exit(app.exec())
+    get_tmp_dir().cleanup()
