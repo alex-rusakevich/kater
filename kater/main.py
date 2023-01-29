@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QFileDialog
-from PyQt6 import uic
+from PyQt6 import uic, QtGui
 import qtawesome as qta
 from kater.resources import Ktr_Object, load_global_ktr_obj, get_global_ktr_obj, get_tmp_dir
 from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
@@ -8,6 +8,7 @@ import math
 import sys
 import os.path
 import os
+from kater.recorder import start_recording, stop_recording, OUTPUT_FILE_NAME, init_recorder
 
 
 class UI(QMainWindow):
@@ -45,11 +46,15 @@ class UI(QMainWindow):
             btn.setIcon(qta.icon('fa.microphone-slash'))
             btn.setStyleSheet(
                 "background-color: palette(highlight); color: palette(bright-text);")
+
+            start_recording()
         else:
             btn.setText("Start")
             btn.setIcon(qta.icon('fa.microphone'))
             btn.setStyleSheet(
                 "background-color: palette(button); color: palette(button-text);")
+
+            stop_recording()
 
     def togglePlay(self, event=None, desired_state=None):
         btn = self.playBtn
@@ -75,7 +80,10 @@ class UI(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        uic.loadUi("kater/kater.ui", self)
+        uic.loadUi("kater/ui/kater.ui", self)
+
+        # Downloaded from https://www.flaticon.com/free-icon/speedboat_2012527?term=speedboat&page=1&position=94&origin=tag&related_id=2012527
+        self.setWindowIcon(QtGui.QIcon("./icon.png"))
 
         self.setContentsMargins(10, 10, 10, 10)
 
@@ -172,6 +180,7 @@ class UI(QMainWindow):
 
 
 def kater(file_in=None):
+    init_recorder()
     app = QApplication([])
 
     window = UI()
@@ -196,4 +205,4 @@ def kater(file_in=None):
     load_global_ktr_obj(file_in)
     window.use_global_object()
 
-    app.exec()
+    sys.exit(app.exec())
