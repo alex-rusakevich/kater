@@ -33,6 +33,7 @@ def get_global_ktr_obj():
 
 
 tempdir = tempfile.TemporaryDirectory()
+print("tempdir is", tempdir.name)
 
 
 def get_tmp_dir():

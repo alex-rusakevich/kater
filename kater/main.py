@@ -1,10 +1,13 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QFileDialog
 from PyQt6 import uic
 import qtawesome as qta
 from kater.resources import Ktr_Object, load_global_ktr_obj, get_global_ktr_obj, get_tmp_dir
 from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PyQt6.QtCore import QUrl
 import math
+import sys
+import os.path
+import os
 
 
 class UI(QMainWindow):
@@ -165,6 +168,8 @@ class UI(QMainWindow):
 
         self.toggleReading(False)
 
+        self.current_ktr = ktr_obj
+
 
 def kater(file_in=None):
     app = QApplication([])
@@ -172,8 +177,23 @@ def kater(file_in=None):
     window = UI()
     window.show()
 
-    if file_in:
-        load_global_ktr_obj(file_in)
-        window.use_global_object()
+    if not file_in:
+        home_dir = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), os.pardir, "modules/")
+
+        FILTER = """
+            'Kater train reading' file (*.ktr)
+        """
+        SELECTED_FILTER = "'Kater train reading' file (*.ktr)"
+        file_name = QFileDialog.getOpenFileName(
+            None, 'Open file', home_dir, FILTER, SELECTED_FILTER)
+
+        if file_name[0]:
+            file_in = file_name[0]
+        else:
+            sys.exit(1)
+
+    load_global_ktr_obj(file_in)
+    window.use_global_object()
 
     app.exec()
