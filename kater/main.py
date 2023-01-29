@@ -17,13 +17,17 @@ class UI(QMainWindow):
         else:
             btn.setProperty("is_reading_shown", desired_state)
 
-        if btn.property("is_reading_shown"):
+        if not btn.property("is_reading_shown"):
             btn.setIcon(qta.icon('ei.eye-open'))
+            if hasattr(self, "text"):
+                self.readingText.setText(self.text)
         else:
             btn.setIcon(qta.icon('ei.eye-close'))
+            if hasattr(self, "reading") and hasattr(self, "text"):
+                self.readingText.setText(self.text + "\n" + self.reading)
 
     def toggleRecording(self, event=None, desired_state=None):
-        btn = self.startRecording
+        btn = self.startRecordingBtn
 
         if desired_state == None:
             state = btn.property("is_recording")
@@ -35,12 +39,16 @@ class UI(QMainWindow):
         if btn.property("is_recording"):
             btn.setText("Stop")
             btn.setIcon(qta.icon('fa.microphone-slash'))
+            btn.setStyleSheet(
+                "background-color: palette(highlight); color: palette(bright-text);")
         else:
             btn.setText("Start")
             btn.setIcon(qta.icon('fa.microphone'))
+            btn.setStyleSheet(
+                "background-color: palette(button); color: palette(button-text);")
 
-    def toggleExamplePlay(self, event=None, desired_state=None):
-        btn = self.playExample
+    def togglePlay(self, event=None, desired_state=None):
+        btn = self.playBtn
 
         if desired_state == None:
             state = btn.property("is_playing")
@@ -49,13 +57,13 @@ class UI(QMainWindow):
             btn.setProperty("is_playing", desired_state)
 
         if btn.property("is_playing"):
-            btn.setText("Pause the example")
+            btn.setText("Pause")
             btn.setIcon(qta.icon('fa.pause-circle'))
 
             if hasattr(self, "player"):
                 self.player.play()
         else:
-            btn.setText("Play the example")
+            btn.setText("Play")
             btn.setIcon(qta.icon('fa.play-circle'))
 
             if hasattr(self, "player"):
@@ -68,30 +76,27 @@ class UI(QMainWindow):
         self.setContentsMargins(10, 10, 10, 10)
 
         # Setting buttons icons
-        self.findChild(QPushButton, "playUserRecord").setIcon(
+        self.findChild(QPushButton, "playBtn").setIcon(
             qta.icon('fa.play-circle'))
-        self.findChild(QPushButton, "saveUserRecord").setIcon(
-            qta.icon('fa5s.save'))
 
-        self.findChild(QPushButton, "resetUserRecord").setIcon(
-            qta.icon('fa.stop'))
+        self.findChild(QPushButton, "stopBtn").setIcon(
+            qta.icon('fa.stop-circle'))
 
         self.toggleRecording(desired_state=False)
-        self.startRecording.clicked.connect(self.toggleRecording)
+        self.startRecordingBtn.clicked.connect(self.toggleRecording)
 
         # Setting top icons
 
-        self.findChild(QPushButton, "resetExample").setIcon(
-            qta.icon('fa.stop'))
+        self.togglePlay(desired_state=False)
+        self.playBtn.clicked.connect(self.togglePlay)
 
-        self.findChild(QPushButton, "resetAll").setIcon(
-            qta.icon('mdi.reload'))
-
-        self.toggleExamplePlay(desired_state=False)
-        self.playExample.clicked.connect(self.toggleExamplePlay)
-
-        self.toggleReading(desired_state=True)
         self.toggleReadingBtn.clicked.connect(self.toggleReading)
+
+        def stop_btn_clicked(status):
+            if hasattr(self, "player"):
+                self.togglePlay(desired_state=False)
+                self.player.stop()
+        self.stopBtn.clicked.connect(stop_btn_clicked)
 
     def closeEvent(self, event):
         get_tmp_dir().cleanup()
@@ -99,14 +104,13 @@ class UI(QMainWindow):
     def use_global_object(self):
         def example_media_status_changed(status):
             if status == QMediaPlayer.MediaStatus.EndOfMedia:
-                btn = self.playExample
+                btn = self.playBtn
                 btn.setProperty("is_playing", False)
-                btn.setText("Play the example")
+                btn.setText("Play")
                 btn.setIcon(qta.icon('fa.play-circle'))
                 self.player.stop()
 
         ktr_obj = get_global_ktr_obj()
-        self.readingText.setText(ktr_obj.text)
 
         player = QMediaPlayer()
         audio_output = QAudioOutput()
@@ -125,6 +129,9 @@ class UI(QMainWindow):
         self.player.mediaStatusChanged.connect(example_media_status_changed)
 
         self.reading = ktr_obj.reading
+        self.text = ktr_obj.text
+
+        self.toggleReading(False)
 
 
 def kater(file_in=None):
