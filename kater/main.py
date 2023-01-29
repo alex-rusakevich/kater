@@ -4,6 +4,7 @@ import qtawesome as qta
 from kater.resources import Ktr_Object, load_global_ktr_obj, get_global_ktr_obj, get_tmp_dir
 from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PyQt6.QtCore import QUrl
+import math
 
 
 class UI(QMainWindow):
@@ -110,6 +111,33 @@ class UI(QMainWindow):
                 btn.setIcon(qta.icon('fa.play-circle'))
                 self.player.stop()
 
+        def setTimeLabel(position, position_max):
+            position_ms = position % 1000
+            position_sec = math.floor(position / 1000)
+            position_min = math.floor(position_sec / 60)
+            position_sec = position_sec % 60
+
+            position_max_ms = position_max % 1000
+            position_max_sec = math.floor(position_max / 1000)
+            position_max_min = math.floor(position_max_sec / 60)
+            position_max_sec = position_max_sec % 60
+
+            self.playTimeLabel.setText(
+                f"{position_min:02d}:{position_sec:02d}.{position_ms:03d} / {position_max_min:02d}:{position_max_sec:02d}.{position_max_ms:03d}")
+
+        def player_position_changed(position):
+            perc = round((position / self.player.duration()) * 100)
+
+            self.recordTimeSlider.blockSignals(True)
+            self.recordTimeSlider.setValue(perc)
+            self.recordTimeSlider.blockSignals(False)
+
+            setTimeLabel(position, self.player.duration())
+
+        def slider_value_changed(position):
+            result_pos = round(position / 100 * self.player.duration())
+            self.player.setPosition(result_pos)
+
         ktr_obj = get_global_ktr_obj()
 
         player = QMediaPlayer()
@@ -127,6 +155,10 @@ class UI(QMainWindow):
         self.audio_output = audio_output
 
         self.player.mediaStatusChanged.connect(example_media_status_changed)
+        self.player.positionChanged.connect(player_position_changed)
+        self.recordTimeSlider.valueChanged.connect(slider_value_changed)
+
+        setTimeLabel(0, self.player.duration())
 
         self.reading = ktr_obj.reading
         self.text = ktr_obj.text
