@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QFileDialog
 from PyQt6 import uic, QtGui
 import qtawesome as qta
-from kater.resources import Ktr_Object, load_global_ktr_obj, get_global_ktr_obj, get_tmp_dir
+from kater.resources import Ktr_Object, load_global_ktr_obj, get_global_ktr_obj, get_tmp_dir, load_vosk_model, audio_to_text
 from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
 from PyQt6.QtCore import QUrl
 import math
@@ -9,6 +9,10 @@ import sys
 import os.path
 import os
 from kater.recorder import start_recording, stop_recording, OUTPUT_FILE_NAME, init_recorder
+from kater.compare import *
+import json
+import re
+import statistics
 
 
 class UI(QMainWindow):
@@ -54,7 +58,28 @@ class UI(QMainWindow):
             btn.setStyleSheet(
                 "background-color: palette(button); color: palette(button-text);")
 
-            stop_recording()
+            if record_path := stop_recording():  # Go to result processing
+                vosk_result = re.sub(
+                    r"(?<=\d),(?=\d+)", ".", audio_to_text(record_path))
+
+                # print(vosk_result)
+
+                vosk_result = json.loads(vosk_result)
+
+                confs = []
+                for res in vosk_result["result"]:
+                    confs.append(res["conf"])
+                confidence = statistics.mean(confs)
+                # print(confidence)
+
+                result = calc_total_result([
+                    test_reading_ref(
+                        self.lang, self.reading, vosk_result["text"], confidence),
+                ])
+
+                self.resultLabel.setText(self.resultLabel.orig_text.replace(
+                    "...", str(round(result["mark"] * 100))))
+                self.resultLabel.mark_log = result["log"]
 
     def togglePlay(self, event=None, desired_state=None):
         btn = self.playBtn
@@ -96,6 +121,8 @@ class UI(QMainWindow):
 
         self.toggleRecording(desired_state=False)
         self.startRecordingBtn.clicked.connect(self.toggleRecording)
+
+        self.resultLabel.orig_text = self.resultLabel.text()
 
         # Setting top icons
 
@@ -174,6 +201,9 @@ class UI(QMainWindow):
         self.toggleReading(False)
 
         self.current_ktr = ktr_obj
+        self.lang = ktr_obj.lang
+
+        load_vosk_model(ktr_obj.lang)
 
 
 def kater(file_in=None):
