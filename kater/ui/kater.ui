@@ -51,8 +51,14 @@
         <height>16777215</height>
        </size>
       </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Press &amp;lt;Ctrl-T&amp;gt; to toggle reading&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
       <property name="text">
        <string>Toggle reading</string>
+      </property>
+      <property name="shortcut">
+       <string>Ctrl+T</string>
       </property>
       <property name="is_reading_shown" stdset="0">
        <bool>true</bool>
@@ -73,6 +79,9 @@
     </item>
     <item row="2" column="0">
      <widget class="QPushButton" name="startRecordingBtn">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Press &amp;lt;SPACE&amp;gt; to toggle recording&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
       <property name="text">
        <string>Start recording</string>
       </property>
@@ -220,8 +229,14 @@
        </item>
        <item row="1" column="4">
         <widget class="QPushButton" name="resetAllBtn">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Press &amp;lt;Ctrl-R&amp;gt; to reset all&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string/>
+         </property>
+         <property name="shortcut">
+          <string>Ctrl+R</string>
          </property>
         </widget>
        </item>

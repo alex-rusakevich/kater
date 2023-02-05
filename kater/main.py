@@ -3,7 +3,9 @@ from PyQt6 import uic, QtGui
 import qtawesome as qta
 from kater.resources import Ktr_Object, load_global_ktr_obj, get_global_ktr_obj, get_tmp_dir, load_vosk_model, audio_to_text
 from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
-from PyQt6.QtCore import QUrl
+from PyQt6.QtCore import QUrl, Qt
+from PyQt6.QtGui import QShortcut, QKeySequence
+from PyQt6.QtTest import QTest
 import math
 import sys
 import os.path
@@ -67,6 +69,10 @@ class UI(QMainWindow):
 
                 # Calc text confidence
                 confs = []
+
+                if "result" not in vosk_result.keys():
+                    return
+
                 for res in vosk_result["result"]:
                     confs.append(res["conf"])
                 confidence = statistics.mean(confs)
@@ -84,6 +90,7 @@ class UI(QMainWindow):
                 self.fullResultMessage = result.log
 
                 self.showFullResultBtn.setEnabled(True)
+                self.resetAllBtn.setEnabled(True)
                 self.startRecordingBtn.setEnabled(False)
 
     def togglePlay(self, event=None, desired_state=None):
@@ -120,6 +127,7 @@ class UI(QMainWindow):
         self.fullResultTitle = ""
         self.startRecordingBtn.setEnabled(True)
         self.resultLabel.setText(self.resultLabel.orig_text)
+        self.resetAllBtn.setEnabled(False)
 
     def __init__(self):
         super().__init__()
@@ -145,9 +153,14 @@ class UI(QMainWindow):
 
         self.resetAllBtn.setIcon(qta.icon('fa.refresh'))
         self.resetAllBtn.clicked.connect(self.reset_all)
+        self.resetAllBtn.setEnabled(False)
 
         self.toggleRecording(desired_state=False)
         self.startRecordingBtn.clicked.connect(self.toggleRecording)
+        self.startRecordingBtn_shortcut = QShortcut(
+            QKeySequence("SPACE"), self)
+        self.startRecordingBtn_shortcut.activated.connect(
+            lambda: QTest.mouseClick(self.startRecordingBtn, Qt.LeftButton))
 
         self.resultLabel.orig_text = self.resultLabel.text()
 
