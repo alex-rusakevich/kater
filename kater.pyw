@@ -24,7 +24,7 @@ def main():
         file_out = args.gen_ktr[1]
 
         _, file_extension = os.path.splitext(file_out)
-        if file_out != ".ktr":
+        if file_extension != ".ktr":
             file_out += ".ktr"
 
         with zipfile.ZipFile(file_out, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as zf:
