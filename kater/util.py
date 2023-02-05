@@ -1,7 +1,14 @@
 from PyQt6.QtWidgets import QMessageBox
 
 
-def panic(title, msg):
+def panic(title: str, msg: str):
+    """
+    Show error missage window and raise exception
+
+    :param title: exception title
+    :param msg: exception message
+    """
+
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Critical)
     msg.setText(title)

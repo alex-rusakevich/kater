@@ -78,8 +78,8 @@ class UI(QMainWindow):
                 ])
 
                 self.resultLabel.setText(self.resultLabel.orig_text.replace(
-                    "...", str(round(result["mark"] * 100))))
-                self.resultLabel.mark_log = result["log"]
+                    "...", str(round(result.result * 100))))
+                self.resultLabel.mark_log = result.log
 
     def togglePlay(self, event=None, desired_state=None):
         btn = self.playBtn

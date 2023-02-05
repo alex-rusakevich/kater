@@ -9,6 +9,8 @@ pyqt6 = "*"
 vosk = "*"
 wave = "*"
 pyaudio = "*"
+levenshtein = "*"
+pinyin = "*"
 
 [dev-packages]
 
