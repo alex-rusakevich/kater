@@ -83,6 +83,9 @@ class UI(QMainWindow):
                 self.fullResultTitle = result.name
                 self.fullResultMessage = result.log
 
+                self.showFullResultBtn.setEnabled(True)
+                self.startRecordingBtn.setEnabled(False)
+
     def togglePlay(self, event=None, desired_state=None):
         btn = self.playBtn
 
@@ -111,6 +114,13 @@ class UI(QMainWindow):
 
         show_log(self.fullResultTitle, self.fullResultMessage)
 
+    def reset_all(self):
+        self.showFullResultBtn.setEnabled(False)
+        self.fullResultMessage = ""
+        self.fullResultTitle = ""
+        self.startRecordingBtn.setEnabled(True)
+        self.resultLabel.setText(self.resultLabel.orig_text)
+
     def __init__(self):
         super().__init__()
         uic.loadUi("kater/ui/kater.ui", self)
@@ -131,15 +141,15 @@ class UI(QMainWindow):
         self.fullResultMessage = ""
         self.showFullResultBtn.clicked.connect(self.showResultMessage)
         self.showFullResultBtn.setIcon(qta.icon('fa.question-circle'))
+        self.showFullResultBtn.setEnabled(False)
 
         self.resetAllBtn.setIcon(qta.icon('fa.refresh'))
+        self.resetAllBtn.clicked.connect(self.reset_all)
 
         self.toggleRecording(desired_state=False)
         self.startRecordingBtn.clicked.connect(self.toggleRecording)
 
         self.resultLabel.orig_text = self.resultLabel.text()
-
-        # Setting top icons
 
         self.togglePlay(desired_state=False)
         self.playBtn.clicked.connect(self.togglePlay)
