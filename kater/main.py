@@ -13,6 +13,7 @@ from kater.compare import *
 import json
 import re
 import statistics
+from kater.util import show_log
 
 
 class UI(QMainWindow):
@@ -62,24 +63,25 @@ class UI(QMainWindow):
                 vosk_result = re.sub(
                     r"(?<=\d),(?=\d+)", ".", audio_to_text(record_path))
 
-                # print(vosk_result)
-
                 vosk_result = json.loads(vosk_result)
 
+                # Calc text confidence
                 confs = []
                 for res in vosk_result["result"]:
                     confs.append(res["conf"])
                 confidence = statistics.mean(confs)
-                # print(confidence)
 
                 result = calc_total_result([
-                    test_reading_ref(
+                    test_reading_levenstein(
                         self.lang, self.reading, vosk_result["text"], confidence),
                 ])
 
                 self.resultLabel.setText(self.resultLabel.orig_text.replace(
                     "...", str(round(result.result * 100))))
                 self.resultLabel.mark_log = result.log
+
+                self.fullResultTitle = result.name
+                self.fullResultMessage = result.log
 
     def togglePlay(self, event=None, desired_state=None):
         btn = self.playBtn
@@ -103,6 +105,12 @@ class UI(QMainWindow):
             if hasattr(self, "player"):
                 self.player.pause()
 
+    def showResultMessage(self):
+        if self.fullResultMessage == "" or self.fullResultTitle == "":
+            return None
+
+        show_log(self.fullResultTitle, self.fullResultMessage)
+
     def __init__(self):
         super().__init__()
         uic.loadUi("kater/ui/kater.ui", self)
@@ -118,6 +126,13 @@ class UI(QMainWindow):
 
         self.findChild(QPushButton, "stopBtn").setIcon(
             qta.icon('fa.stop-circle'))
+
+        self.fullResultTitle = ""
+        self.fullResultMessage = ""
+        self.showFullResultBtn.clicked.connect(self.showResultMessage)
+        self.showFullResultBtn.setIcon(qta.icon('fa.question-circle'))
+
+        self.resetAllBtn.setIcon(qta.icon('fa.refresh'))
 
         self.toggleRecording(desired_state=False)
         self.startRecordingBtn.clicked.connect(self.toggleRecording)
